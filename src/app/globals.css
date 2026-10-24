@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-brand-secondary text-brand-dark antialiased;
+  }
+}
+
+/* Scrollbar suave e personalizada */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fdf2f4;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f48fb1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e91e63;
+}
