@@ -11,6 +11,7 @@ import { DeliverySelector } from '@/components/triagem/DeliverySelector';
 import { CustomerForm } from '@/components/triagem/CustomerForm';
 import { buildWhatsAppUrl } from '@/utils/whatsapp';
 import { OrderForm } from '@/types';
+import { salvarPedidoSupabase } from '@/lib/supabase/orders';
 
 export default function TriagemPage() {
   const {
@@ -134,6 +135,16 @@ export default function TriagemPage() {
       taxa,
       bairroSelecionado ? bairroSelecionado.label : undefined
     );
+
+    // Salva o pedido no banco do Supabase em background (sem bloquear o cliente)
+    salvarPedidoSupabase({
+      items,
+      form: orderFormData,
+      taxa,
+      subtotal,
+      total,
+      bairroNome: bairroSelecionado ? bairroSelecionado.label : undefined,
+    }).catch((err) => console.error('Falha ao registrar no Supabase:', err));
 
     // Abre o WhatsApp com a mensagem formatada
     window.open(url, '_blank');
