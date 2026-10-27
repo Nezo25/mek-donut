@@ -65,6 +65,12 @@ export const Footer: React.FC = () => {
                   Onde Estamos & Rotas
                 </Link>
               </li>
+              <li>
+                <Link href="/admin/produtos" className="hover:text-brand-primary transition-colors text-xs text-pink-300 flex items-center gap-1 pt-1">
+                  <span>🔒</span>
+                  <span>Painel Administrativo</span>
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -151,6 +157,10 @@ export const Footer: React.FC = () => {
             <span>✦</span>
             <Link href="/triagem" className="hover:text-brand-primary underline">
               Fazer Pedido
+            </Link>
+            <span>✦</span>
+            <Link href="/admin/login" className="hover:text-pink-300">
+              Admin
             </Link>
           </div>
         </div>

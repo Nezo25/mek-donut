@@ -7,6 +7,7 @@ interface CartState {
   items: CartItem[];
   modoEntrega: DeliveryMode;
   bairroId: string;
+  endereco: string;
   isEncomenda: boolean;
   dataEncomenda: string;
   horaEncomenda: string;
@@ -22,6 +23,7 @@ interface CartState {
 
   setModoEntrega: (modo: DeliveryMode) => void;
   setBairroId: (bairroId: string) => void;
+  setEndereco: (endereco: string) => void;
   setIsEncomenda: (isEncomenda: boolean) => void;
   setDataEncomenda: (data: string) => void;
   setHoraEncomenda: (hora: string) => void;
@@ -42,6 +44,7 @@ export const useCartStore = create<CartState>()(
       items: [],
       modoEntrega: 'delivery',
       bairroId: 'centro-jdpublico',
+      endereco: '',
       isEncomenda: false,
       dataEncomenda: '',
       horaEncomenda: '',
@@ -97,6 +100,7 @@ export const useCartStore = create<CartState>()(
 
       setModoEntrega: (modo: DeliveryMode) => set({ modoEntrega: modo }),
       setBairroId: (bairroId: string) => set({ bairroId }),
+      setEndereco: (endereco: string) => set({ endereco }),
       setIsEncomenda: (isEncomenda: boolean) => set({ isEncomenda }),
       setDataEncomenda: (dataEncomenda: string) => set({ dataEncomenda }),
       setHoraEncomenda: (horaEncomenda: string) => set({ horaEncomenda }),

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { X, Plus, Minus, ShoppingBag, Sparkles, Check } from 'lucide-react';
+import { X, Plus, Minus, ShoppingBag, Sparkles, Check, XCircle } from 'lucide-react';
 import { Product } from '@/types';
 import { formatCurrency } from '@/utils/formatters';
 
@@ -36,10 +36,12 @@ export const ProductModal: React.FC<ProductModalProps> = ({
 
   if (!isOpen || !product) return null;
 
+  const isAvailable = product.disponivel !== false;
   const currentPrice = product.precoPromocional ?? product.preco;
   const totalPrice = currentPrice * quantity;
 
   const handleAdd = () => {
+    if (!isAvailable) return;
     onAddToCart(product, quantity);
     setIsSuccess(true);
     setTimeout(() => {
@@ -89,10 +91,16 @@ export const ProductModal: React.FC<ProductModalProps> = ({
                 <span>Destaque</span>
               </span>
             )}
+            {!isAvailable && (
+              <span className="bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
+                <XCircle className="w-3.5 h-3.5" />
+                <span>Esgotado no Momento</span>
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Conteúdo com Scroll se necessário */}
+        {/* Conteúdo com Scroll */}
         <div className="p-6 sm:p-8 overflow-y-auto space-y-6">
           <div>
             <h3 className="font-serif text-2xl sm:text-3xl font-bold text-brand-dark mb-2">
@@ -127,66 +135,77 @@ export const ProductModal: React.FC<ProductModalProps> = ({
             </p>
           </div>
 
-          {/* Seletor de Quantidade e Preço Total */}
-          <div className="bg-gray-50 p-4 rounded-2xl flex items-center justify-between border border-gray-100">
-            <div>
-              <span className="text-xs text-gray-400 uppercase tracking-wider font-semibold block">
-                Total do Item
-              </span>
-              <div className="text-2xl font-bold text-brand-primary">
-                {formatCurrency(totalPrice)}
+          {/* Seletor de Quantidade e Preço Total (se disponível) */}
+          {isAvailable ? (
+            <>
+              <div className="bg-gray-50 p-4 rounded-2xl flex items-center justify-between border border-gray-100">
+                <div>
+                  <span className="text-xs text-gray-400 uppercase tracking-wider font-semibold block">
+                    Total do Item
+                  </span>
+                  <div className="text-2xl font-bold text-brand-primary">
+                    {formatCurrency(totalPrice)}
+                  </div>
+                  <span className="text-[11px] text-gray-500">
+                    {formatCurrency(currentPrice)} cada
+                  </span>
+                </div>
+
+                <div className="flex items-center bg-white rounded-full p-1.5 shadow-sm border border-gray-200">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    aria-label="Diminuir quantidade"
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 hover:text-brand-primary transition-colors disabled:opacity-30"
+                    disabled={quantity <= 1}
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span className="w-10 text-center font-bold text-brand-dark text-base">
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => q + 1)}
+                    aria-label="Aumentar quantidade"
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 hover:text-brand-primary transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-              <span className="text-[11px] text-gray-500">
-                {formatCurrency(currentPrice)} cada
-              </span>
-            </div>
 
-            <div className="flex items-center bg-white rounded-full p-1.5 shadow-sm border border-gray-200">
+              {/* Botão de Adicionar */}
               <button
                 type="button"
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                aria-label="Diminuir quantidade"
-                className="w-9 h-9 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 hover:text-brand-primary transition-colors disabled:opacity-30"
-                disabled={quantity <= 1}
+                onClick={handleAdd}
+                className={`w-full py-4 rounded-full font-bold text-base shadow-lg flex items-center justify-center gap-2 transition-all duration-300 ${
+                  isSuccess
+                    ? 'bg-brand-accent text-white scale-[1.02]'
+                    : 'bg-brand-primary text-white hover:bg-[#d01754] hover:shadow-xl active:scale-[0.98]'
+                }`}
               >
-                <Minus className="w-4 h-4" />
+                {isSuccess ? (
+                  <>
+                    <Check className="w-5 h-5 animate-bounce" />
+                    <span>Adicionado à Sacola!</span>
+                  </>
+                ) : (
+                  <>
+                    <ShoppingBag className="w-5 h-5" />
+                    <span>Adicionar à Sacola • {formatCurrency(totalPrice)}</span>
+                  </>
+                )}
               </button>
-              <span className="w-10 text-center font-bold text-brand-dark text-base">
-                {quantity}
-              </span>
-              <button
-                type="button"
-                onClick={() => setQuantity((q) => q + 1)}
-                aria-label="Aumentar quantidade"
-                className="w-9 h-9 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 hover:text-brand-primary transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
+            </>
+          ) : (
+            <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-center text-red-700 space-y-1">
+              <p className="font-bold text-sm">Este sabor está temporariamente esgotado</p>
+              <p className="text-xs text-red-600">
+                Estamos preparando novas fornadas fresquinhas! Confira os outros sabores disponíveis no cardápio.
+              </p>
             </div>
-          </div>
-
-          {/* Botão de Ação */}
-          <button
-            type="button"
-            onClick={handleAdd}
-            className={`w-full py-4 rounded-full font-bold text-base shadow-lg flex items-center justify-center gap-2 transition-all duration-300 ${
-              isSuccess
-                ? 'bg-brand-accent text-white scale-[1.02]'
-                : 'bg-brand-primary text-white hover:bg-[#d01754] hover:shadow-xl active:scale-[0.98]'
-            }`}
-          >
-            {isSuccess ? (
-              <>
-                <Check className="w-5 h-5 animate-bounce" />
-                <span>Adicionado à Sacola!</span>
-              </>
-            ) : (
-              <>
-                <ShoppingBag className="w-5 h-5" />
-                <span>Adicionar à Sacola • {formatCurrency(totalPrice)}</span>
-              </>
-            )}
-          </button>
+          )}
         </div>
 
       </div>

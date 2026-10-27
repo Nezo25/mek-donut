@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { Plus, Tag, Eye } from 'lucide-react';
+import { Plus, Tag, Eye, XCircle } from 'lucide-react';
 import { Product } from '@/types';
 import { formatCurrency } from '@/utils/formatters';
 
@@ -19,10 +19,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
   const currentPrice = product.precoPromocional ?? product.preco;
   const hasPromo = product.precoPromocional !== undefined;
+  const isAvailable = product.disponivel !== false;
 
   return (
-    <div className="bg-white rounded-[2rem] p-5 shadow-editorial border border-pink-50/80 hover:shadow-glass hover:border-pink-200 transition-all duration-300 flex flex-col justify-between group relative">
-      
+    <div
+      className={`bg-white rounded-[2rem] p-5 shadow-editorial border border-pink-50/80 hover:shadow-glass hover:border-pink-200 transition-all duration-300 flex flex-col justify-between group relative ${
+        !isAvailable ? 'opacity-75' : ''
+      }`}
+    >
       {/* Imagem do Produto com Badges */}
       <div
         className="relative overflow-hidden rounded-[1.5rem] mb-4 aspect-[4/3] bg-pink-50 cursor-pointer"
@@ -44,13 +48,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {product.categoria}
         </span>
 
-        {/* Tag Promocional */}
-        {hasPromo && (
+        {/* Badge de Esgotado ou Oferta */}
+        {!isAvailable ? (
+          <span className="absolute top-3 left-3 bg-red-600 text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
+            <XCircle className="w-3 h-3" />
+            <span>ESGOTADO</span>
+          </span>
+        ) : hasPromo ? (
           <span className="absolute top-3 left-3 bg-brand-primary text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1">
             <Tag className="w-3 h-3" />
             <span>OFERTA</span>
           </span>
-        )}
+        ) : null}
 
         {/* Botão Hover "Ver Detalhes" */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
@@ -113,14 +122,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               <Eye className="w-4 h-4" />
             </button>
 
-            <button
-              onClick={() => onQuickAdd(product)}
-              className="px-4 py-2.5 rounded-full bg-brand-primary text-white font-bold text-xs uppercase tracking-wider hover:bg-[#d01754] transition-all shadow-sm hover:shadow flex items-center gap-1.5 active:scale-95"
-              aria-label={`Adicionar ${product.nome} à sacola`}
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Adicionar</span>
-            </button>
+            {isAvailable ? (
+              <button
+                onClick={() => onQuickAdd(product)}
+                className="px-4 py-2.5 rounded-full bg-brand-primary text-white font-bold text-xs uppercase tracking-wider hover:bg-[#d01754] transition-all shadow-sm hover:shadow flex items-center gap-1.5 active:scale-95"
+                aria-label={`Adicionar ${product.nome} à sacola`}
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Adicionar</span>
+              </button>
+            ) : (
+              <span className="px-3.5 py-2 rounded-full bg-gray-100 text-gray-400 font-bold text-xs uppercase tracking-wider">
+                Esgotado
+              </span>
+            )}
           </div>
         </div>
 

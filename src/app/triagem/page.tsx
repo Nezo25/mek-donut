@@ -18,6 +18,7 @@ export default function TriagemPage() {
     items,
     modoEntrega,
     bairroId,
+    endereco,
     isEncomenda,
     dataEncomenda,
     horaEncomenda,
@@ -28,6 +29,7 @@ export default function TriagemPage() {
     removeItem,
     setModoEntrega,
     setBairroId,
+    setEndereco,
     setIsEncomenda,
     setDataEncomenda,
     setHoraEncomenda,
@@ -42,6 +44,7 @@ export default function TriagemPage() {
   const [nomeError, setNomeError] = useState<string | undefined>();
   const [telError, setTelError] = useState<string | undefined>();
   const [bairroError, setBairroError] = useState<string | undefined>();
+  const [enderecoError, setEnderecoError] = useState<string | undefined>();
   const [dataError, setDataError] = useState<string | undefined>();
   const [horaError, setHoraError] = useState<string | undefined>();
   const [modalAviso, setModalAviso] = useState<{ titulo: string; mensagem: string } | null>(null);
@@ -60,12 +63,24 @@ export default function TriagemPage() {
       return false;
     }
 
-    // 2. Validação de Bairro para Delivery
-    if (modoEntrega === 'delivery' && !bairroId) {
-      setBairroError('Selecione uma região de entrega para calcular a taxa.');
-      isValid = false;
+    // 2. Validação de Bairro e Endereço para Delivery
+    if (modoEntrega === 'delivery') {
+      if (!bairroId) {
+        setBairroError('Selecione uma região de entrega para calcular a taxa.');
+        isValid = false;
+      } else {
+        setBairroError(undefined);
+      }
+
+      if (!endereco || endereco.trim().length < 5) {
+        setEnderecoError('Informe a rua e número para entrega.');
+        isValid = false;
+      } else {
+        setEnderecoError(undefined);
+      }
     } else {
       setBairroError(undefined);
+      setEnderecoError(undefined);
     }
 
     // 3. Validação de Encomenda Agendada
@@ -123,6 +138,7 @@ export default function TriagemPage() {
       telCliente,
       modoEntrega,
       bairroId,
+      endereco,
       isEncomenda,
       dataEncomenda,
       horaEncomenda,
@@ -246,11 +262,14 @@ export default function TriagemPage() {
             onChangeNome={setNomeCliente}
             telCliente={telCliente}
             onChangeTel={setTelCliente}
+            endereco={endereco}
+            onChangeEndereco={setEndereco}
             observacoes={observacoes}
             onChangeObservacoes={setObservacoes}
             onSubmit={handleFinalizarPedido}
             nomeError={nomeError}
             telError={telError}
+            enderecoError={enderecoError}
             subtotal={subtotal}
             taxa={taxa}
             total={total}

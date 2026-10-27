@@ -3,13 +3,21 @@ export type Category = 'Todos' | 'Halloween' | 'Exclusivos' | 'Combos' | 'Bebida
 export interface Product {
   id: string;
   nome: string;
+  slug?: string;
   categoria: Category | string;
   preco: number;
   precoPromocional?: number;
+  preco_promocional?: number;
   desc: string;
+  descricao?: string;
   img: string;
+  imagem_url?: string;
   tags?: string[];
   destaque?: boolean;
+  disponivel?: boolean;
+  ordem?: number;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface CartItem extends Product {
@@ -30,6 +38,7 @@ export interface OrderForm {
   telCliente: string;
   modoEntrega: DeliveryMode;
   bairroId?: string;
+  endereco?: string;
   isEncomenda: boolean;
   dataEncomenda?: string;
   horaEncomenda?: string;

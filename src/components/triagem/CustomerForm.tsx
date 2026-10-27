@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { User, Phone, MessageSquare, Send, ShieldCheck, Heart } from 'lucide-react';
+import { User, Phone, MessageSquare, Send, ShieldCheck, Heart, MapPin } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { formatCurrency, formatPhone } from '@/utils/formatters';
 
@@ -10,11 +10,14 @@ interface CustomerFormProps {
   onChangeNome: (nome: string) => void;
   telCliente: string;
   onChangeTel: (tel: string) => void;
+  endereco?: string;
+  onChangeEndereco?: (endereco: string) => void;
   observacoes: string;
   onChangeObservacoes: (obs: string) => void;
   onSubmit: () => void;
   nomeError?: string;
   telError?: string;
+  enderecoError?: string;
   subtotal: number;
   taxa: number;
   total: number;
@@ -28,11 +31,14 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
   onChangeNome,
   telCliente,
   onChangeTel,
+  endereco = '',
+  onChangeEndereco,
   observacoes,
   onChangeObservacoes,
   onSubmit,
   nomeError,
   telError,
+  enderecoError,
   subtotal,
   taxa,
   total,
@@ -84,6 +90,19 @@ export const CustomerForm: React.FC<CustomerFormProps> = ({
           helperText="Digite com DDD para receber a confirmação e a chave PIX."
           required
         />
+
+        {!isRetirada && onChangeEndereco && (
+          <Input
+            label="Endereço de Entrega (Rua, Número e Complemento)"
+            placeholder="Ex: Av. Salvador Markowicz, 120, Apto 42"
+            value={endereco}
+            onChange={(e) => onChangeEndereco(e.target.value)}
+            error={enderecoError}
+            leftIcon={<MapPin className="w-4 h-4" />}
+            helperText={`Bairro selecionado: ${bairroNome || 'A combinar'}`}
+            required
+          />
+        )}
 
         <div>
           <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1.5 flex items-center gap-1.5">
